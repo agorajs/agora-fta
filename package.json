@@ -1,7 +1,7 @@
 {
   "name": "agora-fta",
   "version": "0.1.0",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "author": "stardisblue <stardisblue@gmail.com>",
   "license": "MIT",
   "scripts": {
