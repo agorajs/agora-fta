@@ -11,7 +11,7 @@
  * https://doi.org/10.1016/j.ins.2007.02.016.
  * (http://www.sciencedirect.com/science/article/pii/S0020025507000989)
  */
-import _ from 'lodash'
+import _ from 'lodash';
 import {
   Graph,
   Node,
@@ -22,7 +22,7 @@ import {
   CartesianVector,
   Point,
   hasOverlap
-} from 'agora-graph'
+} from 'agora-graph';
 import {
   VirtualNode,
   SeedNode,
@@ -31,92 +31,94 @@ import {
   getBox,
   getBorders,
   getBorderNodes
-} from './virtual-nodes'
+} from './virtual-nodes';
 
-import { U, R, D, L } from './directions'
-import { DirectionRemoval } from './direction-removal'
-import { N, NN } from './neighbor-nodes'
-import { TNN } from './transfer-neighbor-nodes'
-import Algorithm from 'agora-algorithm';
-
+import { U, R, D, L } from './directions';
+import { DirectionRemoval } from './direction-removal';
+import { N, NN } from './neighbor-nodes';
+import { oldTNN } from './transfer-neighbor-nodes';
+import { createFunction } from 'agora-algorithm';
 
 // refaire la 1ere version de fta
-export const forceTransfer: Algorithm.Function = function (
+export const forceTransfer = createFunction(function(
   graph,
-  options = { padding: 0, seed: { x: 0, y: 0 } }
+  options: { padding: number; seed: Point } = {
+    padding: 0,
+    seed: { x: 0, y: 0 }
+  }
 ) {
   while (hasOverlap(graph.nodes, options.padding)) {
-    const d = options.padding
-    const seed: SeedNode = createSeed(options.seed)
+    const d = options.padding;
+    // const seed: SeedNode = createSeed(options.seed);
 
     // first we get the virtual nodes
-    const virtuals = getVirtualNodes(graph, d)
+    const virtuals = getVirtualNodes(graph, d);
     // then we iterate over the virtual nodes to remove overlap inside them
 
     // console.log('virtuals:', virtuals)
     _.forEach(virtuals, virtualNode =>
       removeOverlap(virtualNode.nodes, virtualNode.seed, d)
-    )
+    );
 
     _.forEach(virtuals, virtual => {
-      const borders = getBorders(getBorderNodes(virtual.nodes))
-      const box = getBox(borders)
+      const borders = getBorders(getBorderNodes(virtual.nodes));
+      const box = getBox(borders);
       const center: Point = {
         x: borders.left + box.width / 2,
         y: borders.top + box.height / 2
-      }
-      virtual.x = center.x
-      virtual.y = center.y
-      virtual.origin = center
-      virtual.height = box.height
-      virtual.width = box.width
-    })
+      };
+      virtual.x = center.x;
+      virtual.y = center.y;
+      virtual.origin = center;
+      virtual.height = box.height;
+      virtual.width = box.width;
+    });
 
     // then we remove the overlap over the virtual nodes
-    _.forEach(virtuals, virtual => removeVirtualOverlap(virtuals, virtual, d))
+    _.forEach(virtuals, virtual => removeVirtualOverlap(virtuals, virtual, d));
 
     // if the virtual nodes have moved, then we apply this movement to the nodes they contain
     _.forEach(virtuals, virtualNode => {
       const delta: CartesianVector = {
         x: virtualNode.x - virtualNode.origin.x,
         y: virtualNode.y - virtualNode.origin.y
-      }
+      };
 
-      if (delta.x === 0 && delta.y === 0) return // nothing changed
+      if (delta.x === 0 && delta.y === 0) return; // nothing changed
 
       _.forEach(virtualNode.nodes, i => {
-        i.x += delta.x
-        i.y += delta.y
-      })
-    })
+        i.x += delta.x;
+        i.y += delta.y;
+      });
+    });
   }
 
-  return { graph: graph }
-}
+  return { graph: graph };
+});
 
 function getVirtualNodes(G: Graph, d: number): VirtualNode[] {
   // we iterate over each node, if the node is not in any existing virtual node, then we get the tnn of this node
-  const virtuals: VirtualNode[] = []
+  const virtuals: VirtualNode[] = [];
 
   _.forEach(G.nodes, self => {
-    let present = false
+    let present = false;
 
     _.forEach(virtuals, virtual => {
-      present = _.includes(virtual.nodes, self)
-      return !present
-    })
+      present = _.includes(virtual.nodes, self);
+      return !present;
+    });
 
     if (!present) {
       // if node is not present in any virtual
-      const nodes = TNN(G.nodes, self, d)
+      const nodes = oldTNN(G.nodes, self, d);
 
-      nodes.push(self) // adding self to the list
+      nodes.push(self); // adding self to the list
 
-      virtuals.push(createVirtualNode(virtuals.length, nodes))
+      virtuals.push(createVirtualNode(virtuals.length, nodes));
     }
-  })
+  });
 
-  return virtuals
+  return virtuals;
 }
 
 const RightRemoval: DirectionRemoval = {
@@ -127,15 +129,15 @@ const RightRemoval: DirectionRemoval = {
     const delta = {
       x: right(i) - left(j),
       y: Math.min(Math.abs(top(i) - bottom(j)), Math.abs(bottom(i) - top(j)))
-    }
+    };
 
-    if (delta.x <= delta.y) return delta.x
-    return 0
+    if (delta.x <= delta.y) return delta.x;
+    return 0;
   },
   update(j, delta, d) {
-    j.x += delta + d
+    j.x += delta + d;
   }
-}
+};
 
 const LeftRemoval: DirectionRemoval = {
   name: 'left',
@@ -145,15 +147,15 @@ const LeftRemoval: DirectionRemoval = {
     const delta = {
       x: right(j) - left(i),
       y: Math.min(Math.abs(top(i) - bottom(j)), Math.abs(bottom(i) - top(j)))
-    }
+    };
 
-    if (delta.x <= delta.y) return delta.x
-    return 0
+    if (delta.x <= delta.y) return delta.x;
+    return 0;
   },
   update(j, delta, d) {
-    j.x = j.x - (delta + d)
+    j.x = j.x - (delta + d);
   }
-}
+};
 
 const DownRemoval: DirectionRemoval = {
   name: 'down',
@@ -163,15 +165,15 @@ const DownRemoval: DirectionRemoval = {
     const delta = {
       x: Math.min(Math.abs(left(i) - right(j)), Math.abs(right(i) - left(j))),
       y: bottom(i) - top(j)
-    }
+    };
 
-    if (delta.y <= delta.x) return delta.y
-    return 0
+    if (delta.y <= delta.x) return delta.y;
+    return 0;
   },
   update(j, delta, d) {
-    j.y += delta + d
+    j.y += delta + d;
   }
-}
+};
 
 const UpRemoval: DirectionRemoval = {
   name: 'up',
@@ -181,15 +183,15 @@ const UpRemoval: DirectionRemoval = {
     const delta = {
       x: Math.min(Math.abs(left(i) - right(j)), Math.abs(right(i) - left(j))),
       y: bottom(j) - top(i)
-    }
+    };
 
-    if (delta.y <= delta.x) return delta.y
-    return 0
+    if (delta.y <= delta.x) return delta.y;
+    return 0;
   },
   update(j, delta, d) {
-    j.y = j.y - (delta + d)
+    j.y = j.y - (delta + d);
   }
-}
+};
 
 /**
  * remove overlaps on the right of the seed node
@@ -198,17 +200,17 @@ const UpRemoval: DirectionRemoval = {
  * @param d padding
  */
 function removeOverlap(V: Node[], q: Node, d: number): void {
-  if (V.length === 1) return // nothing to do
-  const tnn = TNN(V, q, d)
-  if (tnn.length === 0) return // nothing to do
+  if (V.length === 1) return; // nothing to do
+  const tnn = oldTNN(V, q, d);
+  if (tnn.length === 0) return; // nothing to do
 
-  const nn = NN(tnn, q, d)
-  if (nn.length === 0) return // nothing to do
+  const nn = NN(tnn, q, d);
+  if (nn.length === 0) return; // nothing to do
 
-  directedRemoveOverlap(nn, tnn, q, d, RightRemoval)
-  directedRemoveOverlap(nn, tnn, q, d, LeftRemoval)
-  directedRemoveOverlap(nn, tnn, q, d, UpRemoval)
-  directedRemoveOverlap(nn, tnn, q, d, DownRemoval)
+  directedRemoveOverlap(nn, tnn, q, d, RightRemoval);
+  directedRemoveOverlap(nn, tnn, q, d, LeftRemoval);
+  directedRemoveOverlap(nn, tnn, q, d, UpRemoval);
+  directedRemoveOverlap(nn, tnn, q, d, DownRemoval);
 }
 
 function removeVirtualOverlap(
@@ -216,16 +218,16 @@ function removeVirtualOverlap(
   q: VirtualNode,
   d: number
 ): void {
-  if (V.length === 1) return // nothing to do
+  if (V.length === 1) return; // nothing to do
 
-  const tnn = TNN(V, q, d)
-  if (tnn.length === 0) return // console.log(tnn)
+  const tnn = oldTNN(V, q, d);
+  if (tnn.length === 0) return; // console.log(tnn)
 
-  const nn = NN(tnn, q, d)
-  if (nn.length === 0) return // console.log(nn)
+  const nn = NN(tnn, q, d);
+  if (nn.length === 0) return; // console.log(nn)
 
-  directedRemoveOverlap(nn, tnn, q, d, RightRemoval)
-  directedRemoveOverlap(nn, tnn, q, d, DownRemoval)
+  directedRemoveOverlap(nn, tnn, q, d, RightRemoval);
+  directedRemoveOverlap(nn, tnn, q, d, DownRemoval);
 }
 
 /**
@@ -243,43 +245,43 @@ function directedRemoveOverlap(
   d: number,
   dir: DirectionRemoval
 ): void {
-  const directedNN = dir.filter(nn, i)
-  if (directedNN.length === 0) return // nothing to do : )
-  directedNN.sort(dir.sort)
+  const directedNN = dir.filter(nn, i);
+  if (directedNN.length === 0) return; // nothing to do : )
+  directedNN.sort(dir.sort);
 
-  const directedTNN = dir.filter(tnn, i)
-  if (directedTNN.length === 0) return // nothing to do :)
-  directedTNN.sort(dir.sort)
+  const directedTNN = dir.filter(tnn, i);
+  if (directedTNN.length === 0) return; // nothing to do :)
+  directedTNN.sort(dir.sort);
 
   // console.groupCollapsed(i.label + ':' + i.index + ':' + dir.name)
   // console.log('i:', i, 'TNN:', directedTNN, 'NN:', directedNN)
 
   _.forEach(directedNN, j => {
-    if (!N(i, j, d)) return // if are not overlapping anymore stop here
+    if (!N(i, j, d)) return; // if are not overlapping anymore stop here
 
-    const delta = dir.delta(i, j) // how much do we need to move it ?
+    const delta = dir.delta(i, j); // how much do we need to move it ?
     // console.log(delta)
-    if (delta === 0) return // no need to move
+    if (delta === 0) return; // no need to move
 
-    _.forEach(directedTNN, node => dir.update(node, delta, d))
-  })
+    _.forEach(directedTNN, node => dir.update(node, delta, d));
+  });
 
   // recursive removal
   // v' can't be anything else than a subset of directedTNN
   _.forEach(directedTNN, j => {
-    const jNN = dir.filter(NN(directedTNN, j, d), j)
-    const jTNN = dir.filter(TNN(directedTNN, j, d), j)
+    const jNN = dir.filter(NN(directedTNN, j, d), j);
+    const jTNN = dir.filter(oldTNN(directedTNN, j, d), j);
 
     // console.log(j, jNN, jTNN)
     _.forEach(jNN, k => {
-      if (!N(j, k, d)) return // if are not overlapping anymore stop here
+      if (!N(j, k, d)) return; // if are not overlapping anymore stop here
 
-      const delta = dir.delta(j, k) // how much do we need to move it ?
-      if (delta === 0) return // no need to move
+      const delta = dir.delta(j, k); // how much do we need to move it ?
+      if (delta === 0) return; // no need to move
 
-      _.forEach(jTNN, node => dir.update(node, delta, d))
-    })
-  })
+      _.forEach(jTNN, node => dir.update(node, delta, d));
+    });
+  });
   // console.log('fin', directedNN)
   // console.groupEnd()
 }
