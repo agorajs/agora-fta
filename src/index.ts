@@ -25,8 +25,6 @@ import {
 } from 'agora-graph';
 import {
   VirtualNode,
-  SeedNode,
-  createSeed,
   createVirtualNode,
   getBox,
   getBorders,
@@ -36,7 +34,7 @@ import {
 import { U, R, D, L } from './directions';
 import { DirectionRemoval } from './direction-removal';
 import { N, NN } from './neighbor-nodes';
-import { oldTNN } from './transfer-neighbor-nodes';
+import { TNN } from './transfer-neighbor-nodes';
 import { createFunction } from 'agora-algorithm';
 
 // refaire la 1ere version de fta
@@ -110,7 +108,7 @@ function getVirtualNodes(G: Graph, d: number): VirtualNode[] {
 
     if (!present) {
       // if node is not present in any virtual
-      const nodes = oldTNN(G.nodes, self, d);
+      const nodes = TNN(G.nodes, self, d);
 
       nodes.push(self); // adding self to the list
 
@@ -201,7 +199,7 @@ const UpRemoval: DirectionRemoval = {
  */
 function removeOverlap(V: Node[], q: Node, d: number): void {
   if (V.length === 1) return; // nothing to do
-  const tnn = oldTNN(V, q, d);
+  const tnn = TNN(V, q, d);
   if (tnn.length === 0) return; // nothing to do
 
   const nn = NN(tnn, q, d);
@@ -220,7 +218,7 @@ function removeVirtualOverlap(
 ): void {
   if (V.length === 1) return; // nothing to do
 
-  const tnn = oldTNN(V, q, d);
+  const tnn = TNN(V, q, d);
   if (tnn.length === 0) return; // console.log(tnn)
 
   const nn = NN(tnn, q, d);
@@ -270,7 +268,7 @@ function directedRemoveOverlap(
   // v' can't be anything else than a subset of directedTNN
   _.forEach(directedTNN, j => {
     const jNN = dir.filter(NN(directedTNN, j, d), j);
-    const jTNN = dir.filter(oldTNN(directedTNN, j, d), j);
+    const jTNN = dir.filter(TNN(directedTNN, j, d), j);
 
     // console.log(j, jNN, jTNN)
     _.forEach(jNN, k => {
