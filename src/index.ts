@@ -25,8 +25,6 @@ import {
 } from 'agora-graph';
 import {
   VirtualNode,
-  SeedNode,
-  createSeed,
   createVirtualNode,
   getBox,
   getBorders,
