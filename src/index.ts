@@ -45,7 +45,7 @@ export const forceTransfer = createFunction(function(
     seed: { x: 0, y: 0 }
   }
 ) {
-  while (hasOverlap(graph.nodes, options.padding)) {
+  while (hasOverlap(graph.nodes, -0.0001)) {
     const d = options.padding;
     // const seed: SeedNode = createSeed(options.seed);
 
