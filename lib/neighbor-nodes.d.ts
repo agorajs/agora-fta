@@ -4,17 +4,11 @@ export interface NNFunction {
 }
 /**
  * neighbor node (definition1)
- * @param i
- * @param j
- * @param d minimum horizontal distance
  *
- * @returns true if the nodes are neighbor
+ * @returns true if the nodes are overlapping and i !== j
  */
-export declare function N(i: Node, j: Node, d: number): boolean;
+export declare function N(i: Node, j: Node, padding: number): boolean;
 /**
  * neighbor nodes (definition2)
- * @param V
- * @param q
- * @param d minimal horizontal distance
  */
-export declare function NN(V: Node[], q: Node, d: number): Node[];
+export declare function NN(V: Node[], q: Node, padding: number): Node[];
