@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import { forceTransfer } from '.';
-import NaNi from '../data/NaN';
-import { Node, left, overlap, right, delta, norm } from 'agora-graph';
+import NaNi from './data/NaN';
 
 const nomove = {
   nodes: [
