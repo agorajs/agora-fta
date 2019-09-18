@@ -21,7 +21,9 @@ import {
   bottom,
   CartesianVector,
   Point,
-  hasOverlap
+  hasOverlap,
+  createFunction,
+  Algorithm
 } from 'agora-graph';
 import {
   VirtualNode,
@@ -35,9 +37,7 @@ import { U, R, D, L } from './directions';
 import { DirectionRemoval } from './direction-removal';
 import { N, NN } from './neighbor-nodes';
 import { TNN } from './transfer-neighbor-nodes';
-import { createFunction } from 'agora-algorithm';
 
-// refaire la 1ere version de fta
 export const forceTransfer = createFunction(function(
   graph,
   options: { padding: number; seed: Point } = {
@@ -93,6 +93,16 @@ export const forceTransfer = createFunction(function(
 
   return { graph: graph };
 });
+
+export const ForceTransferAlgorithm: Algorithm<{
+  padding: number;
+  seed: Point;
+}> = {
+  name: 'FTA',
+  algorithm: forceTransfer
+};
+
+export default ForceTransferAlgorithm;
 
 function getVirtualNodes(G: Graph, d: number): VirtualNode[] {
   // we iterate over each node, if the node is not in any existing virtual node, then we get the tnn of this node
