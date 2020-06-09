@@ -10,7 +10,7 @@ const nomove = {
       y: 10,
       label: '0',
       width: 10,
-      height: 10
+      height: 10,
     },
     {
       index: 1,
@@ -18,7 +18,7 @@ const nomove = {
       y: 20,
       label: '0',
       width: 10,
-      height: 10
+      height: 10,
     },
     {
       index: 3,
@@ -26,10 +26,10 @@ const nomove = {
       y: 20,
       label: '0',
       width: 10,
-      height: 10
-    }
+      height: 10,
+    },
   ],
-  edges: []
+  edges: [],
 };
 
 const move = {
@@ -40,7 +40,7 @@ const move = {
       y: 10,
       label: '0',
       width: 15,
-      height: 15
+      height: 15,
     },
     {
       index: 1,
@@ -48,7 +48,7 @@ const move = {
       y: 20,
       label: '0',
       width: 15,
-      height: 15
+      height: 15,
     },
     {
       index: 3,
@@ -56,10 +56,10 @@ const move = {
       y: 20,
       label: '0',
       width: 15,
-      height: 15
-    }
+      height: 15,
+    },
   ],
-  edges: []
+  edges: [],
 };
 
 test('Agora FTA', () => {
@@ -74,7 +74,7 @@ test('Agora FTA', () => {
         label: '0',
         width: 15,
         x: 10,
-        y: 10
+        y: 10,
       },
       {
         height: 15,
@@ -82,7 +82,7 @@ test('Agora FTA', () => {
         label: '0',
         width: 15,
         x: 15,
-        y: 25
+        y: 25,
       },
       {
         height: 15,
@@ -90,12 +90,12 @@ test('Agora FTA', () => {
         label: '0',
         width: 15,
         x: 30,
-        y: 25
-      }
-    ]
+        y: 25,
+      },
+    ],
   });
 });
 
-test('agora-FTA Nani', function() {
+test('agora-FTA Nani', function () {
   const result = forceTransfer(NaNi).graph;
 });

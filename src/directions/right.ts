@@ -1,6 +1,6 @@
-import filter from 'lodash/filter'
+import filter from 'lodash/filter';
 
-import { left as x1, Node } from 'agora-graph'
+import { left as x1, Node } from 'agora-graph';
 
 /**
  * Returns a subset of v where each node is at the right of q
@@ -8,7 +8,7 @@ import { left as x1, Node } from 'agora-graph'
  * @param q seed node
  */
 export function R(v: Node[], q: Node): Node[] {
-  return filter(v, i => x1(i) >= x1(q))
+  return filter(v, (i) => x1(i) >= x1(q));
 }
 
 /* // Unused

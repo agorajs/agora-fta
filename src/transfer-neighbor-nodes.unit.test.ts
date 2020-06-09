@@ -8,7 +8,7 @@ const onechange = {
       y: 10,
       label: '0',
       width: _.random(10) + 5,
-      height: _.random(10) + 5
+      height: _.random(10) + 5,
     },
     {
       index: 1,
@@ -16,7 +16,7 @@ const onechange = {
       y: 20,
       label: '0',
       width: _.random(10) + 5,
-      height: _.random(10) + 5
+      height: _.random(10) + 5,
     },
     {
       index: 3,
@@ -24,7 +24,7 @@ const onechange = {
       y: 20,
       label: '0',
       width: _.random(10) + 5,
-      height: _.random(10) + 5
+      height: _.random(10) + 5,
     },
     {
       index: 4,
@@ -32,7 +32,7 @@ const onechange = {
       y: 10,
       label: '0',
       width: _.random(10) + 5,
-      height: _.random(10) + 5
+      height: _.random(10) + 5,
     },
     {
       index: 5,
@@ -40,7 +40,7 @@ const onechange = {
       y: 22,
       label: '0',
       width: _.random(10) + 5,
-      height: _.random(10) + 5
+      height: _.random(10) + 5,
     },
     {
       index: 6,
@@ -48,10 +48,10 @@ const onechange = {
       y: 23,
       label: '0',
       width: _.random(10) + 5,
-      height: _.random(10) + 5
-    }
+      height: _.random(10) + 5,
+    },
   ],
-  edges: []
+  edges: [],
 };
 
 test('Transfer neigbor nodes is working', () => {
