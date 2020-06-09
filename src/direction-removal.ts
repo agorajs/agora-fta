@@ -1,4 +1,4 @@
-import { Node } from 'agora-graph';
+import type { Node } from 'agora-graph';
 
 /**
  * Interface allowing to remove overlap in a given direction

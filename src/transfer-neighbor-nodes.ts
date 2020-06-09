@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Node } from 'agora-graph';
+import type { Node } from 'agora-graph';
 import { NN } from './neighbor-nodes';
 
 // export interface TNNFunction extends NNFunction { }
@@ -53,12 +53,12 @@ export function oldTNN(V: Node[], q: Node, d: number): Node[] {
 }
 
 /**
- * 
- * @param V 
- * @param NN_q 
- * @param check 
- * @param array 
- * @param d 
+ *
+ * @param V
+ * @param NN_q
+ * @param check
+ * @param array
+ * @param d
  * @deprecated
  */
 function rTNN(
@@ -68,7 +68,7 @@ function rTNN(
   array: Node[],
   d: number
 ): void {
-  _.forEach(NN_q, j => {
+  _.forEach(NN_q, (j) => {
     if (check[j.index] !== true) {
       check[j.index] = true;
       array.push(j);

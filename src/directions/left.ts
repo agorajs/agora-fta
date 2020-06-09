@@ -1,9 +1,9 @@
-import filter from 'lodash/filter'
+import filter from 'lodash/filter';
 
-import { left as x1, Node } from 'agora-graph'
+import { left as x1, Node } from 'agora-graph';
 
 export function L(v: Node[], q: Node): Node[] {
-  return filter(v, i => x1(i) < x1(q))
+  return filter(v, (i) => x1(i) < x1(q));
 }
 /* // Unused
 export namespace L {
